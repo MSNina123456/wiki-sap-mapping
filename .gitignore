@@ -1,0 +1,12 @@
+# wiki-sap-mapping intermediate / cache artifact files. The agent writes
+# into out/ during a pipeline run; Agency must NOT include any of these
+# in the PR. The deliverable lives in wiki-sap-mapping/ instead.
+out/
+
+# Note: AAAP_CodeWiki/ is intentionally NOT listed here. The wiki is a
+# Code Wiki backed by THIS repo at AAAP_CodeWiki/ on the main branch —
+# its files are tracked content of AAAP_Code, not pipeline-generated
+# temporary state. Writes are blocked at the agent layer (Safety Rules
+# in wiki-sap-mapping.agent.md + the preToolUse hook in
+# .github/hooks/scripts/pre-tool-guard.ps1), so the wiki cannot be
+# modified by the agent even though git would otherwise notice changes.

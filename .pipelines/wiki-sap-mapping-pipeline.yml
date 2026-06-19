@@ -1,0 +1,348 @@
+trigger: none  # Agency invokes this pipeline — never run on code push.
+
+# ════════════════════════════════════════════════════════════════════════════
+# Single source of truth for the publish location.
+#
+# Change a value here → it propagates automatically to:
+#   • wiki-sap.mjs           (reads via process.env.*)
+#   • pre-tool-guard.ps1     (reads via $env:PUBLISH_PARENT_DIR)
+#   • Post-Agent guard step  (reads via $env:PUBLISH_PARENT_DIR)
+#   • All generated markdown links (← Back to index, Detail page, etc.)
+#     — they are built from these same constants inside wiki-sap.mjs.
+#
+# MANUAL SYNC REQUIRED (the only places that don't auto-update):
+#   • .github/agents/wiki-sap-mapping.agent.md
+#       — this is prompt text the LLM reads verbatim; placeholders won't
+#         work. Search the file for the OLD path and replace with the NEW.
+#   • README.md and OVERVIEW.md (human docs; keep readable).
+# ════════════════════════════════════════════════════════════════════════════
+variables:
+  - name: PUBLISH_PARENT_DIR
+    value: AAAP_CodeWiki/Draft/Nina
+  - name: INDEX_PAGE_NAME
+    value: Wiki-SAP-Mapping
+  - name: WIKI_URL_PREFIX
+    value: /Draft/Nina
+
+# The 1ES Agency pipeline template lives in the 1ESPipelineTemplates repo.
+# 1ES.Agency is GA and ships in refs/tags/release alongside Official/Unofficial.
+#
+# We deliberately do NOT declare a `pipelines:` resource for the previous run's
+# artifact — that would (a) fail YAML validation on the very first run when
+# no prior build exists, and (b) is redundant because the DownloadPipelineArtifact@2
+# step below resolves the same artifact directly via buildType:specific + this
+# pipeline's own definitionId.
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Agency.PipelineTemplate.yml@1esPipelines
+  parameters:
+    # ⚠️ Replace with your team's 1ES Hosted Pool.
+    pool:
+      name: MSSecurity-1ES-Build-Agents-Pool
+      image: MSSecurity-1ES-Windows-2022
+      os: windows  # OS of the image. This value cannot be a variable. Allowed values: windows, linux, macOS
+
+    agentContextRoot: $(Build.SourcesDirectory)
+
+    # IMPORTANT: do NOT set logPath under $(Build.SourcesDirectory).
+    # Agency creates $(Agency_LogPath) before its own clone step runs,
+    # and `git clone . ` requires an empty target — pointing logPath
+    # inside SourcesDirectory pollutes the clone target so the clone
+    # fails ("destination path '.' already exists and is not an empty
+    # directory"), the .git/ never gets created, and Agency CLI bails
+    # later with "no .git in cwd".
+    # Leave logPath default ($(Build.StagingDirectory)/agency-logs).
+    # We copy out/ into $(Agency_LogPath) in postAgentSteps so AgencyArtifact
+    # contains both our wiki-sap-mapping outputs and Agency's own logs.
+
+    settings:
+      networkIsolationAdditionalDomainAllowList:
+        - agentsupportapi.app.prod.gitops.startclean.microsoft.com
+
+    preAgentSteps:
+      - task: UseNode@1
+        displayName: 'Use Node 20.x'
+        inputs:
+          version: '20.x'
+
+      # All preAgentSteps below invoke the unified `wiki-sap.mjs` script
+      # (subcommand-driven CLI replacing the old 10 separate .js files).
+
+      # 0a. Hard-fail on any sap-catalog / overrides inconsistency BEFORE we
+      #     do any expensive work. Exit code 13 maps to the
+      #     `catalog-invalid` result-category declared in agent.md.
+      - task: PowerShell@2
+        displayName: 'Pre-Agent: validate sap-catalog & overrides'
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            node .pipelines/wiki-sap-mapping/wiki-sap.mjs validate-catalog
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      # Note: there is intentionally NO "clone wiki" step here. The AAAP
+      # wiki is a Code Wiki backed by THIS repo (AAAP_Code) at branch
+      # main, folder AAAP_CodeWiki/. Agency's source-sync step already
+      # checks out that folder as part of the normal clone, so
+      # $(Build.SourcesDirectory)/AAAP_CodeWiki/ is present from the
+      # start. If the wiki later becomes a separate Project Wiki, add a
+      # `git clone https://dev.azure.com/$org/$proj/_git/<wikiName>.wiki`
+      # step here and grant the build identity Read on that repo.
+
+      # 1. Try to fetch the previous run's artifact as the cache.
+      #    Agency dispatches every run on a fresh feature branch (like
+      #    copilot/swe-wi-NNN-xxx), so filtering by current branch never
+      #    matches an earlier run — use `latest` (any branch) instead.
+      #    Also accept PartiallySucceeded ("Warning"): Agency template
+      #    auto-injects 1ES compliance steps (Guardian SDL Logs, Component
+      #    Detection, etc.) that can emit non-fatal warnings → the whole
+      #    build ends up PartiallySucceeded even though our agent + PR
+      #    + artifact publish all succeeded.
+      #    First run still won't have one — `continueOnError: true` lets
+      #    us proceed and treat it as a first-run scenario.
+      #    Filtering by tag `cache-ready` excludes builds where our
+      #    postAgentSteps didn't finish (no copy → no artifact contents).
+      #
+      #    artifactName: deliberately UNSET. The Agency template publishes
+      #    with a decorated name pattern
+      #      AgencyArtifact-{Org}-{Project}-{PipelineId}-{BuildId}
+      #    e.g. AgencyArtifact-Supportability-AAAP_Code-644-1181411
+      #    We can't predict {BuildId} at download time (it's the previous
+      #    build, resolved by `latest` filter), so we omit artifactName,
+      #    pull the JSONs we need via itemPattern, and flatten the
+      #    artifact-named subfolder in the next step.
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Pre-Agent: download previous artifact (cache)'
+        continueOnError: true
+        inputs:
+          buildType: specific
+          project: $(System.TeamProject)
+          definition: $(System.DefinitionId)
+          buildVersionToDownload: latest
+          allowPartiallySucceededBuilds: true
+          allowFailedBuilds: false
+          tags: 'cache-ready'
+          itemPattern: |
+            **/wiki-mapping.json
+            **/wiki-pages.json
+            **/catalog-hash.txt
+          targetPath: '$(Build.SourcesDirectory)/out/_cache'
+
+      # 1b. Flatten the cache directory: the previous step downloads files
+      #     into _cache/<artifact-name>/<file>. Our diff-pages expects them
+      #     at _cache/<file>. Move everything up one level and remove the
+      #     now-empty artifact-named subfolder(s).
+      - task: PowerShell@2
+        displayName: 'Pre-Agent: flatten downloaded cache files'
+        continueOnError: true
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            $cacheDir = Join-Path $env:BUILD_SOURCESDIRECTORY 'out/_cache'
+            if (-not (Test-Path $cacheDir)) {
+              Write-Host "No cache dir present (first run or download skipped)."
+              exit 0
+            }
+            $moved = 0
+            Get-ChildItem -Path $cacheDir -File -Recurse | ForEach-Object {
+              $target = Join-Path $cacheDir $_.Name
+              if ($_.FullName -ne $target) {
+                if (Test-Path $target) { Remove-Item -Force $target }
+                Move-Item -Force $_.FullName $target
+                $moved++
+              }
+            }
+            # Remove now-empty subdirectories (deepest first).
+            Get-ChildItem -Path $cacheDir -Directory -Recurse |
+              Sort-Object FullName -Descending |
+              Where-Object { -not (Get-ChildItem $_.FullName -Recurse -File -ErrorAction SilentlyContinue) } |
+              Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+            Write-Host "[cache-flatten] moved $moved file(s) to _cache/ root"
+            Write-Host "===== Cache contents after flatten ====="
+            Get-ChildItem $cacheDir -Recurse | ForEach-Object { Write-Host "  $($_.FullName.Substring($cacheDir.Length + 1))" }
+
+      # 2. Walk AAAP_CodeWiki and emit out/wiki-pages.json (with contentHash
+      #    per page) and out/catalog-hash.txt.
+      - task: PowerShell@2
+        displayName: 'Pre-Agent: walk AAAP_CodeWiki'
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            New-Item -ItemType Directory -Force -Path out | Out-Null
+            node .pipelines/wiki-sap-mapping/wiki-sap.mjs list-wiki-pages
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        env:
+          WIKI_ROOT: $(Build.SourcesDirectory)/AAAP_CodeWiki
+
+      # 3. Compare against the cache; emit wiki-pages-changed.json and
+      #    wiki-mapping-carryover.json.
+      - task: PowerShell@2
+        displayName: 'Pre-Agent: diff against cache'
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            node .pipelines/wiki-sap-mapping/wiki-sap.mjs diff-pages
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            Write-Host ""
+            Write-Host "===== Diff summary ====="
+            Get-Content out/diff-summary.json
+
+      # 4. Build the compact L1 catalog and Stage-1 input for the agent.
+      - task: PowerShell@2
+        displayName: 'Pre-Agent: prepare Stage 1 (L1 route) input'
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            node .pipelines/wiki-sap-mapping/wiki-sap.mjs prepare-l1-route
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+    # The agent (WikiSapMapper) handles ALL of these steps in one Agency
+    # invocation, per .github/agents/wiki-sap-mapping.agent.md:
+    #   Step 1: Stage 1 — L1 routing prompt (inline in agent.md)  → out/stage1/l1-routing.json
+    #   Step 2: shell: wiki-sap.mjs prepare-l2l3-detail           → out/stage2/* (bucket × batch)
+    #   Step 3: Stage 2 — L2/L3 detail prompt (inline in agent.md) → out/stage2/<slug>/output-NNN.json
+    #   Step 4: shell: wiki-sap.mjs consolidate-stage2 / merge-mapping /
+    #           render-per-l1 / render-index                      → out/Wiki-SAP-Mapping*.md (flat)
+    #   Step 5: shell: wiki-sap.mjs publish-mapping               → wiki-sap-mapping/**.md (Agency commits → PR)
+    # Tunable via Pipeline UI variable MAX_PAGES_PER_BUCKET_BATCH
+    # (default 50, read by `prepare-l2l3-detail`).
+
+    postAgentSteps:
+      # Deterministic guard rail (P0): the agent prompt + preToolUse hook
+      # both forbid writes outside the publish area, but those layers are
+      # advisory / scripted. This step is server-side ground truth — if
+      # ANY git-tracked file outside $(PUBLISH_PARENT_DIR) has been
+      # modified by the agent, we revert those changes and fail the build
+      # BEFORE Agency gets to commit, so the wiki and config can never end
+      # up in a PR by accident. The rest of AAAP_CodeWiki/ (including
+      # other Draft/ subfolders) is treated as read-only wiki content.
+      - task: PowerShell@2
+        displayName: 'Post-Agent: guard — wiki + repo files untouched'
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            # Single source of truth: PUBLISH_PARENT_DIR pipeline variable.
+            $publishDir = $env:PUBLISH_PARENT_DIR
+            if (-not $publishDir) { $publishDir = 'AAAP_CodeWiki/Draft/Nina' }
+            $publishDir = $publishDir.TrimEnd('/')
+            $publishRe  = [regex]::Escape($publishDir)
+
+            # `git status --porcelain` lists every modified/added/deleted file.
+            # We expect ONLY changes under $publishDir/ (and untracked files
+            # under out/, which .gitignore handles).
+            $allowedRe = "^($publishRe/|out/)"
+            $changes = git status --porcelain 2>$null | Where-Object { $_ }
+            $forbidden = $changes | Where-Object {
+              # Strip the 2-char status prefix (e.g. " M ", "?? ").
+              $rel = $_.Substring(3).Trim('"')
+              $rel -notmatch $allowedRe -and $rel -ne ''
+            }
+            if ($forbidden) {
+              Write-Host "##[error]Agent modified files outside ${publishDir}/. Reverting and failing the build to prevent contaminated PR:"
+              $forbidden | ForEach-Object { Write-Host "  $_" }
+              # Hard-revert any tracked file the agent touched, and remove
+              # any untracked file outside our allowlist. Use -- to scope.
+              foreach ($line in $forbidden) {
+                $code = $line.Substring(0, 2)
+                $rel  = $line.Substring(3).Trim('"')
+                if ($code -match '\?\?') {
+                  # Untracked file — just delete it.
+                  Remove-Item -Force -LiteralPath $rel -ErrorAction SilentlyContinue
+                } else {
+                  # Modified/added tracked file — revert.
+                  git checkout -- $rel 2>$null
+                }
+              }
+              Write-Error "Build aborted: agent wrote to forbidden paths (see list above). Wiki and repo files reverted; nothing will be committed."
+              exit 99
+            }
+            Write-Host "✅ Only ${publishDir}/ (and gitignored out/) modified — wiki and repo files preserved."
+            $allowed = $changes | Where-Object { $_.Substring(3).Trim('"') -match "^$publishRe/" }
+            if ($allowed) {
+              Write-Host "   ${publishDir}/ changes Agency will commit:"
+              $allowed | ForEach-Object { Write-Host "     $_" }
+            } else {
+              Write-Host "   (no ${publishDir}/ changes — PR will be empty, Agency will abandon)"
+            }
+
+      # Trim intermediate / cache files; only the next run's cache stays.
+      - task: PowerShell@2
+        displayName: 'Post-Agent: trim out/ to cache essentials'
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            $indexName = $env:INDEX_PAGE_NAME
+            if (-not $indexName) { $indexName = 'Wiki-SAP-Mapping' }
+            Remove-Item -Recurse -Force out/_cache,out/stage1,out/stage2,out/per-l1 -ErrorAction SilentlyContinue
+            Remove-Item -Force out/wiki-pages-changed.json,out/wiki-mapping-carryover.json,out/wiki-mapping-changed.json,out/wiki-mapping-overrides.json,out/render-stats.json -ErrorAction SilentlyContinue
+            Get-ChildItem out -Filter "$indexName*.md" -ErrorAction SilentlyContinue | Remove-Item -Force
+            Write-Host "===== Cache files retained for next run ====="
+            Get-ChildItem out -Recurse -File | ForEach-Object { $_.FullName.Substring((Resolve-Path .).Path.Length + 1) }
+
+      # Copy the trimmed out/ tree into Agency's log dir so it ends up
+      # inside AgencyArtifact (the only artifact Agency lets us publish —
+      # outputs: parameter is filtered, PublishPipelineArtifact@1 is
+      # SDL-blocked). Next run's DownloadPipelineArtifact@2 step pulls
+      # AgencyArtifact and extracts into out/_cache/, where
+      # `wiki-sap.mjs diff-pages` finds wiki-mapping.json, catalog-hash.txt, etc.
+      - task: PowerShell@2
+        displayName: 'Post-Agent: copy out/ into $(Agency_LogPath) for artifact'
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            $dst = $env:Agency_LogPath
+            if (-not $dst) { throw "Agency_LogPath env var not set" }
+            New-Item -ItemType Directory -Force -Path $dst | Out-Null
+            if (Test-Path out) { Copy-Item -Recurse -Force out\* $dst\ }
+            Write-Host "===== copied to $dst ====="
+            Get-ChildItem $dst -Recurse -File | ForEach-Object { $_.FullName.Substring($dst.Length + 1) }
+
+      # Note: artifact publishing is handled automatically by the Agency
+      # template (it publishes $(Agency_LogPath) as AgencyArtifact). The
+      # user-side `outputs:` parameter and PublishPipelineArtifact@1
+      # task are both filtered/blocked, so no manual publish step here.
+
+      # Tag this build as `cache-ready` so the NEXT run's
+      # DownloadPipelineArtifact@2 (tags: 'cache-ready') will only
+      # consider builds that completed postAgentSteps. This prevents
+      # the persistent "Artifact AgencyArtifact was not found" error
+      # when `latest` resolves to a build that errored mid-run and
+      # never produced the artifact. Must be the LAST step so any
+      # earlier failure leaves the build untagged.
+      - task: PowerShell@2
+        displayName: 'Post-Agent: tag build as cache-ready'
+        inputs:
+          targetType: inline
+          pwsh: true
+          script: |
+            $u = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($env:BUILD_BUILDID)/tags/cache-ready?api-version=7.0"
+            $h = @{ Authorization = "Bearer $($env:SYSTEM_ACCESSTOKEN)" }
+            try {
+              Invoke-RestMethod -Uri $u -Method Put -Headers $h | Out-Null
+              Write-Host "✅ tagged build $($env:BUILD_BUILDID) with cache-ready"
+            } catch {
+              Write-Warning "Failed to add cache-ready tag: $($_.Exception.Message). Next run may miss this build as cache source — not blocking."
+            }
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)

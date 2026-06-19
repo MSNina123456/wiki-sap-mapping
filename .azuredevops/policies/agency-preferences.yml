@@ -1,0 +1,40 @@
+# Tells Agency which pipeline to dispatch when work items in this repo
+# are assigned to it. Commit this file on the default branch — Agency
+# ignores it on feature branches.
+#
+# How to fill the values below:
+#   organization — your ADO org short name (the bit before .visualstudio.com
+#                  or after dev.azure.com/). For supportability that's
+#                  literally "supportability".
+#   projectId    — GUID from ADO → Project Settings → Overview → Project ID.
+#                  Not the project name.
+#   pipelineId   — Open the registered pipeline in the browser; the URL is
+#                  .../pipelines?definitionId=NNNN — that NNNN is the ID.
+#   pipelineTrialMode — when true, only work items tagged
+#                       `agency:pipelineTrialMode=true` route to this
+#                       pipeline. **KEEP THIS true PERMANENTLY** —
+#                       agency-preferences.yml is REPO-WIDE: setting
+#                       false would route every Agency assignment in
+#                       AAAP_Code (e.g., "fix this bug" work items) to
+#                       our pipeline. The tag is how we scope the wiki
+#                       SAP mapping refresh: title the work item
+#                       "Refresh wiki SAP mapping" and add the tag
+#                       `agency:pipelineTrialMode=true`. Other work items
+#                       assigned to Agency without that tag fall through
+#                       to the default Copilot behavior.
+
+# metadata
+name: Agency custom pipeline configuration
+description: Route Agency jobs for this repo to our custom pipeline
+
+# filters
+resource: repository
+
+# primitive configuration
+configuration:
+  agencyPreferences:
+    pipelineConfig:
+      organization: supportability
+      projectId: 6e1f91fa-9d05-431a-84a6-b7254ac681fa
+      pipelineId: 644              # wiki-sap-mapping pipeline (real one). 643 was the smoke pipeline used pre-validation.
+      pipelineTrialMode: true

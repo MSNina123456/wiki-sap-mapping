@@ -1,0 +1,4 @@
+{
+  "_comment": "Map a wiki page path to a SAP leaf using 'L1 > L2 > L3' format. The string must match an entry in sap-catalog.json exactly.",
+  "/How%2DTo-Guides/Delete-an-Automation-Account": "Azure Automation > Automation Account > I am trying to delete or unlink an Automation Account"
+}

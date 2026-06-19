@@ -1,0 +1,1086 @@
+[
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "My job is stuck in the running state and can't be stopped",
+    "description": "An Automation job stays in Running state indefinitely and the standard Stop action does not terminate it. Covers force-termination via API/PowerShell and cancellation-request semantics. Excludes jobs that fail to start (see 'Job did not start as expected'), jobs that finished with Failed status (see 'Job Failed'), and Suspended state (see 'Job Suspended').",
+    "keywords": [
+      "job stuck running",
+      "cancel stuck job",
+      "cannot stop job",
+      "job not stopping"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "My hybrid worker job isn't working properly",
+    "description": "A job dispatched to an already-registered Hybrid Runbook Worker runs but produces incorrect behavior, wrong output, hangs without an error, or has unexpected side effects. Excludes installing/removing the Worker (see Hybrid Runbook Worker L2 leaves) and runbook startup failures on the Worker (see 'Runbook failed, or failed to start on Hybrid Runbook Worker').",
+    "keywords": [
+      "hybrid worker job output",
+      "hybrid worker job behavior",
+      "hybrid worker job hangs",
+      "hybrid worker output",
+      "hybrid worker behavior"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "My runbook works locally but not in Automation",
+    "description": "Same script succeeds when run locally (PowerShell/Python) but fails when uploaded as an Automation runbook — module/dependency differences, sandbox restrictions, identity differences between the local user and the Automation Account. Excludes Hybrid Worker behavior (see 'My hybrid worker job isn't working properly').",
+    "keywords": [
+      "works locally not in automation",
+      "local vs automation runbook",
+      "runbook environment difference"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "Runbook to start or stop VMs",
+    "description": "Guidance and patterns for runbooks that power Azure VMs on or off on a schedule or on demand — required permissions, scheduling, idempotent design. Excludes Update Manager maintenance windows and generic runbook errors.",
+    "keywords": [
+      "start stop vm runbook",
+      "schedule vm shutdown runbook",
+      "vm power runbook",
+      "start stop azure vm"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "My runbook isn't working with managed identity",
+    "description": "Runbook code that calls Connect-AzAccount -Identity (or equivalent) fails at execution time — token-acquisition errors inside a job, role-assignment gaps detected only at runtime. Excludes general Managed Identity configuration questions (see the Managed Identities L2 leaves).",
+    "keywords": [
+      "runbook managed identity fails",
+      "connect-azaccount identity error",
+      "runbook mi authentication"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "Cmdlet not working",
+    "description": "One specific PowerShell cmdlet errors out — 'not recognized', missing parameter, or unexpected behavior — inside a runbook, typically due to module/version mismatches that mask the cmdlet. Excludes script-wide PowerShell errors (see 'Error running Powershell Runbook') and module import/update (see the Modules L2 leaves).",
+    "keywords": [
+      "cmdlet not recognized",
+      "cmdlet not found",
+      "powershell cmdlet missing"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "Error running Powershell Runbook",
+    "description": "PowerShell runbook fails to execute or throws exceptions beyond a single missing cmdlet — script-level errors, parsing, permissions, runtime exceptions. Excludes a single-cmdlet failure (see 'Cmdlet not working') and Python runbooks.",
+    "keywords": [
+      "powershell runbook error",
+      "ps runbook exception",
+      "powershell runbook fails"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "Error running Python Runbook",
+    "description": "Python 2/3 runbook fails to execute — import errors, syntax issues, runtime exceptions, sandbox limitations specific to Python. Excludes PowerShell runbook issues.",
+    "keywords": [
+      "python runbook error",
+      "python runbook fails",
+      "python automation script error"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "Job did not start as expected",
+    "description": "Job is queued or scheduled but never enters Running state — sandbox warm-up failures, schedule misfires, throttling. Excludes jobs that started then are stuck (see 'My job is stuck in the running state'), Failed jobs (see 'Job Failed'), and Suspended jobs (see 'Job Suspended').",
+    "keywords": [
+      "job did not start",
+      "job not starting",
+      "job stuck queued"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "Job Failed",
+    "description": "Job entered Running state then terminated with Failed status — reading the Errors stream, classifying transient vs permanent failure, retry semantics. Excludes Suspended state (see 'Job Suspended'), stuck Running (see 'My job is stuck …'), and start failures (see 'Job did not start as expected').",
+    "keywords": [
+      "job failed status",
+      "job status failed",
+      "automation job failed"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runbook not working as expected",
+    "l3": "Job Suspended",
+    "description": "Job ended in Suspended state because a checkpoint terminated execution (PowerShell Workflow) or an unhandled error caused suspension — resume semantics, checkpoint mechanics. Excludes Failed status (see 'Job Failed').",
+    "keywords": [
+      "job suspended state",
+      "resume suspended job",
+      "checkpoint suspended"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Automation Account",
+    "l3": "I need help creating an Automation Account",
+    "description": "Creating a new Automation Account via portal, ARM, Bicep, Terraform, or CLI — region/SKU selection, identity choice at creation time, linked Log Analytics workspace setup. Excludes existing-account migration (see 'I want to migrate to another subscription') and deletion.",
+    "keywords": [
+      "create automation account",
+      "new automation account",
+      "set up automation account"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Automation Account",
+    "l3": "I am trying to delete or unlink an Automation Account",
+    "description": "Cleanly deleting or unlinking an existing Automation Account — dependent resource cleanup (Run As accounts, Hybrid Workers, schedules), Diagnostic Settings, and common deletion errors (in-use, soft-delete). Excludes runbook/job deletion.",
+    "keywords": [
+      "delete automation account",
+      "unlink automation account",
+      "remove automation account"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Automation Account",
+    "l3": "I want to migrate to another subscription",
+    "description": "Moving an Automation Account from one Azure subscription to another — move-resource flow, what does and does not move, schedule and link preservation. Excludes in-place upgrades within the same subscription.",
+    "keywords": [
+      "migrate automation account subscription",
+      "move automation account subscription",
+      "transfer automation account"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Automation Account",
+    "l3": "I need help with Source Control",
+    "description": "Configuring Azure Automation Source Control integration with GitHub or Azure Repos for runbook sync — initial setup, sync errors, authentication, enabling/disabling sync. Excludes general runbook authoring and module management.",
+    "keywords": [
+      "automation source control",
+      "github integration runbook sync",
+      "azure repos automation sync"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Automation Account",
+    "l3": "I need help with Azure Automation Private Link",
+    "description": "Setting up Private Endpoint for an Automation Account so jobs and webhooks reach the service over a private VNet — DNS, Hybrid Worker connectivity over Private Link, public access disabling. Excludes general networking issues unrelated to Private Link.",
+    "keywords": [
+      "automation private link",
+      "automation account private endpoint",
+      "automation account vnet integration"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "State Configuration (DSC)",
+    "l3": "Node configuration fails",
+    "description": "A DSC node reports non-compliance or failure when applying an assigned configuration — pull failures, LCM errors, partial-configuration issues. Excludes server-side compile problems (see 'Problem compiling a configuration') and template deployment (see 'My template did not deploy').",
+    "keywords": [
+      "dsc node configuration fail",
+      "dsc lcm error",
+      "dsc node noncompliant"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "State Configuration (DSC)",
+    "l3": "My template did not deploy",
+    "description": "A DSC configuration template (.mof / .ps1) did not upload, did not deploy to nodes, or node registration to the Automation Account failed. Excludes the in-server compile step (see 'Problem compiling a configuration') and ARM template issues (see the ARM Template L2 leaves).",
+    "keywords": [
+      "dsc template not deployed",
+      "dsc configuration upload fail",
+      "dsc node registration fail"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "State Configuration (DSC)",
+    "l3": "Problem compiling a configuration",
+    "description": "Compiling a DSC configuration in Azure Automation (Start-AzAutomationDscCompilationJob or portal Compile) fails — parameter mismatches, missing modules at compile time, partial configurations. Excludes runtime application of the resulting MOF (see 'Node configuration fails').",
+    "keywords": [
+      "compile dsc configuration",
+      "dsc compilation job failed",
+      "compilation job error"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "State Configuration (DSC)",
+    "l3": "Migrating Automation DSC to Guest Configuration",
+    "description": "Plan and execute migration from Azure Automation State Configuration to Azure Policy Guest Configuration — feature parity, machine-by-machine cutover, timeline. Excludes only the DSC VM extension retirement (see 'DSC Extension Retirement').",
+    "keywords": [
+      "migrate dsc to guest configuration",
+      "automation dsc retirement",
+      "guest configuration cutover"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "State Configuration (DSC)",
+    "l3": "DSC Extension Retirement",
+    "description": "Retirement of the DSC VM extension itself — deadlines, deprecation notices, end-of-life implications for VMs using the extension. Excludes the Automation DSC service migration (see 'Migrating Automation DSC to Guest Configuration').",
+    "keywords": [
+      "dsc extension retire",
+      "dsc extension deprecation",
+      "dsc extension end of life"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Problems with Hybrid Runbook Worker",
+    "l3": "Installation or Removal of Hybrid Runbook Worker v1 (Agent based)",
+    "description": "Installing or uninstalling the v1 agent-based Hybrid Runbook Worker on Windows/Linux machines — prerequisites, registration to the Automation Account, group join/leave, certificate handling. Excludes v2 extension-based (see 'v2 (Extension based)') and v1→v2 migration (see 'I need help migrating Agent-based to Extension-based Hybrid Worker').",
+    "keywords": [
+      "hybrid runbook worker v1",
+      "agent based hybrid worker install",
+      "agent based hybrid worker uninstall"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Problems with Hybrid Runbook Worker",
+    "l3": "Installation or Removal of Hybrid Runbook Worker v2 (Extension based)",
+    "description": "Installing or uninstalling the v2 extension-based Hybrid Runbook Worker via Azure VM extension or Arc machine extension — extension deployment, identity, removal. Excludes v1 agent-based and version migration.",
+    "keywords": [
+      "hybrid runbook worker v2",
+      "extension based hybrid worker install",
+      "extension based hybrid worker uninstall"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Problems with Hybrid Runbook Worker",
+    "l3": "Runbook failed, or failed to start on Hybrid Runbook Worker",
+    "description": "An existing Hybrid Runbook Worker is online and registered, but a dispatched job fails to start, errors immediately, or is rejected by the Worker host — Worker eligibility, network egress, sandbox issues. Excludes installing/removing the Worker and behavioral issues after a job has started (see 'My hybrid worker job isn't working properly').",
+    "keywords": [
+      "runbook fail on hybrid worker",
+      "runbook cannot start hybrid worker",
+      "hybrid worker rejected job"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Problems with Hybrid Runbook Worker",
+    "l3": "I need help migrating Agent-based to Extension-based Hybrid Worker",
+    "description": "Step-by-step migration from v1 agent-based Hybrid Runbook Worker to v2 extension-based on the same machine — parallel running, group rename, validation, decommissioning v1. Excludes a net-new install of either version.",
+    "keywords": [
+      "migrate hybrid worker v1 to v2",
+      "agent to extension hybrid worker migration",
+      "migrate hrw to extension based"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "I need help updating or importing a module",
+    "l3": "Importing modules",
+    "description": "Importing PowerShell or Python modules into an Automation Account via portal, REST, or PowerShell — gallery imports, custom .zip packages, import errors. Excludes updating already-imported Az/AzureRM modules (see 'Update Azure modules').",
+    "keywords": [
+      "import module automation account",
+      "module import failed",
+      "custom module zip import"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "I need help updating or importing a module",
+    "l3": "Update Azure modules",
+    "description": "Updating the bundled Az / AzureRM PowerShell modules in an Automation Account to a newer version — the built-in 'Update Azure modules' flow, version pinning, post-update breakage. Excludes importing brand-new modules.",
+    "keywords": [
+      "update az modules automation",
+      "update azure modules automation",
+      "az module version upgrade automation"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Problems with ARM Template deployment",
+    "l3": "Getting errors when deploying an ARM Template",
+    "description": "Concrete failures while deploying an ARM/Bicep template that creates or modifies Automation resources — quota, schema, RBAC, dependency errors. Excludes general guidance and best-practice questions (see 'Need help or have questions regarding ARM Template').",
+    "keywords": [
+      "arm template deployment error automation",
+      "deploy arm template fail automation",
+      "bicep deployment fail automation"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Problems with ARM Template deployment",
+    "l3": "Need help or have questions regarding ARM Template",
+    "description": "Authoring guidance, parameter design, idempotency, and best-practice questions for ARM/Bicep templates that target Automation resources. Excludes specific deployment error troubleshooting (see 'Getting errors when deploying an ARM Template').",
+    "keywords": [
+      "arm template question automation",
+      "arm template guidance automation",
+      "bicep best practice automation"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "I have queries related to Managed Identities based authentication",
+    "l3": "I am facing unexpected errors while configuring Managed Identities",
+    "description": "Errors during configuration of system-assigned or user-assigned Managed Identity on an Automation Account — role-assignment failures, identity association errors, propagation issues. Excludes runtime authentication failures inside a job (see 'My runbook isn't working with managed identity') and pure enable/disable workflow (see those leaves).",
+    "keywords": [
+      "managed identity configuration error",
+      "managed identity association fail",
+      "configure managed identity error"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "I have queries related to Managed Identities based authentication",
+    "l3": "I want details on system-assigned and user-assigned managed identities",
+    "description": "Conceptual differences between system-assigned and user-assigned Managed Identity for Automation Accounts — lifecycle, sharing, role-assignment patterns, which to choose. Excludes step-by-step enable/disable and runtime errors.",
+    "keywords": [
+      "system assigned vs user assigned",
+      "managed identity types comparison",
+      "choose managed identity type",
+      "system-assigned identity",
+      "user-assigned identity"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "I have queries related to Managed Identities based authentication",
+    "l3": "I want to disable Managed Identities from my Automation Account",
+    "description": "Turning off (removing) system-assigned or user-assigned Managed Identity on an Automation Account — role-assignment cleanup and impact on running runbooks. Excludes enabling (see 'I want to enable …') and configuration errors (see 'I am facing unexpected errors …').",
+    "keywords": [
+      "disable managed identity automation",
+      "remove managed identity from account",
+      "turn off managed identity"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "I have queries related to Managed Identities based authentication",
+    "l3": "I want to enable Managed Identities on my Automation Account",
+    "description": "Turning on system-assigned or assigning a user-assigned Managed Identity to an Automation Account — role assignment to the new identity and converting runbooks from Run As. Excludes disable workflow and configuration errors.",
+    "keywords": [
+      "enable managed identity automation",
+      "assign user assigned identity",
+      "turn on managed identity"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runtime environment",
+    "l3": "I need help creating Runtime environment",
+    "description": "Creating a new Runtime environment in an Automation Account — selecting runtime (PowerShell 5.1, PowerShell 7.x, Python 3.x, etc.), default packages, visibility. Excludes linking runbooks to an existing environment (see 'I need help linking runbooks to Runtime environment') and ongoing management (see 'I need help managing Runtime environment').",
+    "keywords": [
+      "create runtime environment",
+      "new runtime environment",
+      "set up runtime environment"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runtime environment",
+    "l3": "I need help linking runbooks to Runtime environment",
+    "description": "Associating existing runbooks with a specific Runtime environment, switching a runbook between environments, and propagating that change to schedules and webhooks. Excludes creating the environment itself and managing its packages.",
+    "keywords": [
+      "link runbook to runtime environment",
+      "associate runbook runtime environment",
+      "switch runbook runtime environment"
+    ]
+  },
+  {
+    "l1": "Azure Automation",
+    "l2": "Runtime environment",
+    "l3": "I need help managing Runtime environment",
+    "description": "Day-2 operations on an existing Runtime environment — adding/updating packages, version upgrades, retiring an environment, viewing usage. Excludes initial creation and runbook linking.",
+    "keywords": [
+      "manage runtime environment packages",
+      "update runtime environment",
+      "retire runtime environment"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Getting Started",
+    "l3": "Arc Enabled Servers",
+    "description": "Onboarding and operating Azure Update Manager on Arc-enabled servers (on-prem / multi-cloud machines projected into Azure via Arc) — Arc agent prerequisites, hybrid registration to AUM, on-prem network requirements, Arc-specific licensing. Excludes generic Azure VM onboarding (see 'I need help to onboard to Azure Update Manager') and WSUS/Configuration Manager integration.",
+    "keywords": [
+      "arc enabled servers update manager",
+      "aum on arc machine",
+      "arc machine patching"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Getting Started",
+    "l3": "I need help to onboard to Azure Update Manager",
+    "description": "Initial onboarding of Azure VMs to Azure Update Manager — extension/AMA prerequisites, region availability, role assignments, verifying the first assessment. Excludes Arc-enabled servers onboarding (see 'Arc Enabled Servers') and integration with WSUS/SCCM.",
+    "keywords": [
+      "onboard to azure update manager",
+      "enable azure update manager",
+      "first aum setup"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Getting Started",
+    "l3": "WSUS or Configuration Manager integration",
+    "description": "Coexistence or replacement of on-prem WSUS / Microsoft Configuration Manager (SCCM/MECM) with Azure Update Manager — co-management modes, redirecting clients, deduplicating updates, retiring WSUS. Excludes Arc-only or Azure-VM-only onboarding (see the other 'Getting Started' leaves).",
+    "keywords": [
+      "wsus integration aum",
+      "configuration manager integration aum",
+      "sccm to azure update manager"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Maintenance",
+    "l3": "Cannot add or remove from schedule",
+    "description": "User cannot add a machine to a Maintenance Configuration schedule, or cannot remove one that is already attached — RBAC errors, machine eligibility, dynamic-vs-static scope conflicts. Excludes deleting the configuration itself (see 'Delete Configuration') and general schedule failures (see 'Schedule issues').",
+    "keywords": [
+      "cannot add machine to schedule",
+      "cannot remove machine from schedule",
+      "attach machine maintenance configuration"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Maintenance",
+    "l3": "Delete Configuration",
+    "description": "Deleting a Maintenance Configuration in Azure Update Manager — orphan handling, attached-machine cleanup, soft-delete behavior, errors when the configuration is in use. Excludes adding/removing individual machines (see 'Cannot add or remove from schedule').",
+    "keywords": [
+      "delete maintenance configuration",
+      "remove maintenance configuration",
+      "maintenance configuration cleanup"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Maintenance",
+    "l3": "Dynamic Scopes",
+    "description": "Configuring and troubleshooting Dynamic Scopes (rules-based machine selection by subscription/RG/tag) for Maintenance Configurations — scope evaluation, tag matching, expected vs actual membership, scope updates not taking effect. Excludes static membership management (see 'Cannot add or remove from schedule').",
+    "keywords": [
+      "dynamic scope maintenance configuration",
+      "tag based dynamic scope",
+      "dynamic scope not matching"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Maintenance",
+    "l3": "Schedule issues",
+    "description": "A Maintenance Configuration schedule did not run at the expected time, ran on the wrong machines, or produced inconsistent run history — timezone, recurrence, missed windows, partial runs. Excludes Dynamic Scope membership problems (see 'Dynamic Scopes') and add/remove issues (see 'Cannot add or remove from schedule').",
+    "keywords": [
+      "maintenance schedule did not run",
+      "maintenance window missed",
+      "schedule run history inconsistent"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Reporting",
+    "l3": "I have questions about ARG query",
+    "description": "Authoring Azure Resource Graph (ARG/Kusto) queries against Azure Update Manager tables for inventory, assessment, and history — syntax, schema, joins across tables, query performance. Excludes complaints about data accuracy (see 'Reporting inaccuracy').",
+    "keywords": [
+      "arg query update manager",
+      "kusto query aum",
+      "resource graph query aum"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Reporting",
+    "l3": "Reporting inaccuracy",
+    "description": "Data shown in Azure Update Manager dashboards or ARG reports does not match what the machine actually has — stale assessment, missing machines, double-counted updates. Excludes ARG query authoring (see 'I have questions about ARG query').",
+    "keywords": [
+      "reporting inaccuracy aum",
+      "aum dashboard wrong data",
+      "assessment data stale",
+      "reports incorrectly",
+      "incorrectly reported aum",
+      "aum reports inaccuracy",
+      "aum reports patches pending",
+      "assessment report portal"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update or Patching Issues",
+    "l3": "Assessment Failed",
+    "description": "Patch assessment on a machine returns Failed status — agent-side errors (AMA/MMA/Arc), update source unreachable, scan timeout, registry/WMI corruption. Excludes a successful assessment whose data looks wrong (see 'Reporting inaccuracy') and the actual install step (see 'Patching not started' / 'Update Failed or Not Installed').",
+    "keywords": [
+      "patch assessment failed",
+      "update assessment error",
+      "scan failed update manager"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update or Patching Issues",
+    "l3": "Classifications",
+    "description": "How update classifications (Security, Critical, Other, Definition, etc.) are determined per OS and how to filter, target, or exclude by classification in deployments. Excludes Include/Exclude lists by KB ID (see 'Include or Exclude updates').",
+    "keywords": [
+      "update classification meaning",
+      "security classification updates",
+      "classification filter aum"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update or Patching Issues",
+    "l3": "Include or Exclude updates",
+    "description": "Configuring include/exclude lists (by KB ID, package name, or pattern) in a deployment schedule or one-time run, and troubleshooting why a listed update was or was not applied. Excludes classification-based filtering (see 'Classifications').",
+    "keywords": [
+      "include exclude kb list",
+      "exclude update kb",
+      "include kb deployment"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update or Patching Issues",
+    "l3": "My server rebooted unexpectedly",
+    "description": "Server rebooted outside the configured maintenance window, or was expected to reboot but did not — reboot setting interpretation, dependency-required reboots, conflicting policies. Excludes reboot configured intentionally as a Pre/Post step (see 'Pre or Post').",
+    "keywords": [
+      "server rebooted unexpectedly aum",
+      "unexpected reboot update",
+      "reboot outside maintenance window"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update or Patching Issues",
+    "l3": "Patching not started",
+    "description": "A scheduled or on-demand patch run never began on the machine — orchestration did not reach the agent, machine offline at window start, prerequisites missing. Excludes patching that started but errored (see 'Update Failed or Not Installed') and the Assessment phase (see 'Assessment Failed').",
+    "keywords": [
+      "patching never started",
+      "update run not triggered",
+      "patch deployment did not begin"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update or Patching Issues",
+    "l3": "Pre or Post",
+    "description": "Configuring or troubleshooting Pre-Task and Post-Task scripts (Azure Automation runbooks) attached to a Maintenance Configuration — invocation, output capture, failures, ordering relative to the patch step. Excludes general schedule issues (see 'Schedule issues').",
+    "keywords": [
+      "pre task post task aum",
+      "pre script post script maintenance",
+      "maintenance configuration runbook hook"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update or Patching Issues",
+    "l3": "Unexpected updates",
+    "description": "Updates were installed that the user did not intend — wrong machine, wrong KB, outside expected scope. Covers Dynamic Scope drift, classification mis-targeting, policy overlap. Excludes failed installs (see 'Update Failed or Not Installed') and reboot issues (see 'My server rebooted unexpectedly').",
+    "keywords": [
+      "unexpected updates installed",
+      "wrong updates installed",
+      "updates outside scope"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update or Patching Issues",
+    "l3": "Update Failed or Not Installed",
+    "description": "Patch install on a machine returned Failed or NotInstalled state — installer exit codes, missing prerequisites, disk space, OS error logs (WindowsUpdate.log, dnf/yum log). Excludes the scheduling step (see 'Patching not started') and the Assessment phase (see 'Assessment Failed').",
+    "keywords": [
+      "update failed install",
+      "patch install exit code",
+      "windowsupdate log failed"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Policies",
+    "l3": "(General)",
+    "description": "Azure Policy assignments specific to Azure Update Manager — built-in AUM policy initiatives (configure periodic assessment, schedule patches via Maintenance Configurations, etc.), DINE effects, exemptions, scope targeting. Excludes Machine Configuration policy compliance (see 'Machine Configuration > Policy Compliance > (General)') and the MC GuestConfiguration extension (see 'Machine Configuration > Policy extension problems > (General)').",
+    "keywords": [
+      "azure update manager policy initiative",
+      "aum built in policy assignment",
+      "configure periodic assessment policy"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Unsupported OS or Image",
+    "l3": "(General)",
+    "description": "OS or image is not supported by Azure Update Manager — supported version matrix, custom or hardened images, OEM/marketplace images lacking the required agent or update sources, end-of-support OS distros, requesting support for a new image. Excludes assessment failures on supported machines (see 'Assessment Failed') and onboarding flow questions (see 'I need help to onboard to Azure Update Manager').",
+    "keywords": [
+      "unsupported os update manager",
+      "aum supported os matrix",
+      "custom image update manager support",
+      "hotpatching image",
+      "vm image support plan",
+      "aum image support",
+      "image supported aum patching"
+    ]
+  },
+  {
+    "l1": "Azure Update Manager",
+    "l2": "Update Settings",
+    "l3": "(General)",
+    "description": "Configuring update-related settings on machines managed by Azure Update Manager — patch orchestration mode (AutomaticByPlatform vs AutomaticByOS vs Manual), reboot setting (IfRequired/Never/Always), assessment mode (AutomaticByPlatform vs ImageDefault), and changing these at scale. Excludes maintenance schedules themselves (see Maintenance L2 leaves) and include/exclude lists in deployments (see 'Include or Exclude updates').",
+    "keywords": [
+      "patch orchestration mode aum",
+      "automaticbyplatform update setting",
+      "assessment mode update manager"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Azure features and services",
+    "l3": "Azure Policy Guest Configuration",
+    "description": "Configuring Azure Policy Guest Configuration on Arc-enabled servers — assigning policies, audit results, remediation, custom Guest Configuration packages on Arc machines. Excludes Update Manager classifications and policies (see Azure Update Manager L2 leaves) and the Automation DSC migration story (see 'Migrating Automation DSC to Guest Configuration').",
+    "keywords": [
+      "azure policy guest configuration arc",
+      "guest configuration on arc server",
+      "arc policy compliance"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Configuration and setup",
+    "l3": "Cannot install the Connected Machine agent on Windows",
+    "description": "azcmagent installer or PowerShell onboarding script fails on a Windows server — service install errors, MSI codes, MSI repair, prerequisite checks (PowerShell version, .NET, TLS). Excludes Linux installer issues (see 'Cannot install the Connected Machine agent on Linux'), removal (see 'Cannot remove my server from Azure Arc'), and upgrade (see 'Agent Upgrade').",
+    "keywords": [
+      "install connected machine agent on windows",
+      "azcmagent install windows",
+      "arc agent msi install"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Configuration and setup",
+    "l3": "Cannot remove my server from Azure Arc",
+    "description": "User cannot disconnect or unregister an Arc-enabled server — azcmagent disconnect failures, leftover Azure resource, force-removal procedures, manual cleanup. Excludes the install path (see install leaves) and upgrade (see 'Agent Upgrade').",
+    "keywords": [
+      "cannot remove server from azure arc",
+      "azcmagent disconnect",
+      "arc server unregister"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Configuration and setup",
+    "l3": "Proxy server, private endpoint and other networking issues",
+    "description": "Connectivity problems between azcmagent and Azure — proxy authentication, endpoint allow-list, Private Endpoint configuration for Arc, TLS interception, custom firewalls between server and Azure. Excludes pure installer failures (see install leaves) and AUM Private Link (see Update Manager Private Link leaf).",
+    "keywords": [
+      "azcmagent proxy",
+      "arc private endpoint connectivity",
+      "arc agent network allowlist"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Configuration and setup",
+    "l3": "Cannot install the Connected Machine agent on Linux",
+    "description": "azcmagent install (deb / rpm / install_linux.sh) fails on Linux — package manager errors, dependency conflicts, SELinux blocks, distro or version not supported. Excludes Windows installer issues (see 'Cannot install the Connected Machine agent on Windows').",
+    "keywords": [
+      "install connected machine agent on linux",
+      "azcmagent install linux",
+      "arc agent rpm deb install"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Configuration and setup",
+    "l3": "Agent Upgrade",
+    "description": "Upgrading an already-installed Connected Machine agent (azcmagent) to a newer version — auto-update vs manual upgrade, rollback after a bad upgrade, blocked upgrade due to version skew. Excludes fresh install (see install leaves) and uninstall (see 'Cannot remove my server from Azure Arc').",
+    "keywords": [
+      "azcmagent upgrade",
+      "connected machine agent upgrade",
+      "arc agent version upgrade"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Enrollment in Windows Server Hotpatching",
+    "l3": "(General)",
+    "description": "Enrolling Arc-enabled Windows Server machines in the Hotpatching channel — eligibility (Windows Server 2022 Datacenter Azure Edition / supported SKUs), enrollment flow via portal or Azure Policy, license/subscription requirements, opting out, troubleshooting enrollment status. Excludes Update Manager patch settings (see 'Update Settings' under Azure Update Manager) and ESU enrollment (see 'Windows Server Extended Security Updates (ESU)').",
+    "keywords": [
+      "windows server hotpatching enrollment",
+      "arc hotpatch eligibility",
+      "enroll arc machine hotpatching"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Extensions",
+    "l3": "Arc enabled SQL server extension",
+    "description": "The SQL Server extension for Arc-enabled servers — install/upgrade/uninstall, license type configuration (Paid/PAYG/LicenseOnly), inventory not populating, best-practices assessment failures. Excludes generic Arc agent issues (see Configuration and setup leaves) and other Arc extensions.",
+    "keywords": [
+      "arc sql server extension",
+      "azure extension for sql server",
+      "sql server arc license type"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Extensions",
+    "l3": "Azure Monitor Agent(AMA)",
+    "description": "Azure Monitor Agent (AMA) extension on Arc-enabled servers — install/upgrade failures, Data Collection Rule (DCR) attachment, no logs flowing, transition from MMA. Excludes VM Insights stack (see 'Azure VM Insights') and other extensions.",
+    "keywords": [
+      "azure monitor agent on arc",
+      "ama extension arc",
+      "ama dcr no data arc"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Extensions",
+    "l3": "Azure VM Insights",
+    "description": "VM Insights extension stack (Dependency Agent + AMA) on Arc-enabled servers — install, performance map, dependency view missing data. Excludes pure AMA without VM Insights (see 'Azure Monitor Agent(AMA)').",
+    "keywords": [
+      "vm insights arc",
+      "dependency agent arc",
+      "vm insights map no data"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Extensions",
+    "l3": "Microsoft Defender for Endpoint Extension",
+    "description": "Microsoft Defender for Endpoint (MDE) extension on Arc-enabled servers — onboarding, sensor health, removing MMA-based MDE, exclusion from Defender for Cloud auto-provisioning. Excludes Defender plan configuration inside Defender for Cloud itself.",
+    "keywords": [
+      "mde extension arc",
+      "defender for endpoint extension arc",
+      "mde sensor health arc"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Extensions",
+    "l3": "Problems with multiple extensions or other extensions not listed above",
+    "description": "Issues that span multiple Arc extensions at once (conflicts, install ordering, shared agent failures), or single-extension problems for extensions not represented by their own leaf. Excludes any single extension that already has a dedicated leaf (SQL / AMA / VM Insights / MDE / Entra ID Login).",
+    "keywords": [
+      "multiple arc extensions conflict",
+      "arc extension not listed",
+      "arc extension generic failure"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Extensions",
+    "l3": "Entra ID Login extension issue",
+    "description": "Entra ID Login extension (AADLoginForWindows / AADSSHLoginForLinux) on Arc-enabled servers — install failures, signing in to the machine with Entra ID, RBAC roles for SSH/RDP login via Entra ID. Excludes TPM-backed Entra ID usage (see 'Entra ID' under TPM L2).",
+    "keywords": [
+      "entra id login extension arc",
+      "aadsshlogin extension",
+      "arc machine entra id sign in"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Multi-cloud connector",
+    "l3": "Issues creating connector or solution",
+    "description": "Creation of an AWS/GCP Multi-cloud connector or one of its solutions (Inventory, Arc Onboarding, Defender) fails — Azure RBAC, source-cloud credentials, connector resource provisioning errors. Excludes deletion (see 'Issues deleting resources or connector') and ongoing sync (see 'Issues syncing resources').",
+    "keywords": [
+      "multi-cloud connector creation fail",
+      "create aws gcp connector",
+      "multi-cloud solution provisioning"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Multi-cloud connector",
+    "l3": "Issues deleting resources or connector",
+    "description": "Deleting a Multi-cloud connector or its discovered resources fails — dependent solution removal, orphan handling, deletion stuck. Excludes creation (see 'Issues creating connector or solution').",
+    "keywords": [
+      "delete multi-cloud connector",
+      "remove multi-cloud connector",
+      "multi-cloud connector orphan"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Multi-cloud connector",
+    "l3": "Issues onboarding Arc agent",
+    "description": "After the Multi-cloud connector is created, automatic Arc-agent onboarding to discovered AWS/GCP instances fails — credentials propagation, SSM/run-command failures on the source cloud, instance ineligibility. Excludes connector creation (see 'Issues creating connector or solution').",
+    "keywords": [
+      "multi-cloud arc agent onboarding fail",
+      "aws instance arc onboard",
+      "gcp instance arc onboard"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Multi-cloud connector",
+    "l3": "Issues related to authentication with AWS",
+    "description": "AWS-side authentication problems used by the Multi-cloud connector — IAM role trust, missing IAM permissions, expired credentials, cross-account assume-role failures. Excludes GCP credentials and Azure-side identity problems.",
+    "keywords": [
+      "aws iam multi-cloud connector",
+      "aws assume role arc connector",
+      "aws credentials arc connector"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Multi-cloud connector",
+    "l3": "Issues syncing resources",
+    "description": "Multi-cloud connector created and authenticated, but resource sync from the source cloud is delayed, partial, or shows stale state — sync intervals, scope filters, throttling. Excludes initial creation and Arc agent onboarding.",
+    "keywords": [
+      "multi-cloud connector sync delay",
+      "resource sync stale multi-cloud",
+      "connector inventory partial"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Remote access to the server with SSH",
+    "l3": "(General)",
+    "description": "Connecting to an Arc-enabled server over SSH using the Arc SSH proxy (az ssh arc / az connectedmachine connect) — required client extensions, Azure RBAC for SSH, port allowlist, hybrid-connection setup, troubleshooting SSH connection failures. Excludes RDP / Windows Admin Center access (see 'Remote access with Windows Admin Center') and the Entra ID Login extension for OS sign-in (see 'Entra ID Login extension issue').",
+    "keywords": [
+      "ssh arc server proxy",
+      "az ssh arc connect",
+      "arc server ssh port allowlist"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Remote access with Windows Admin Center",
+    "l3": "(General)",
+    "description": "Connecting to an Arc-enabled server using Windows Admin Center (WAC) from the Azure portal — WAC extension install on the Arc machine, port 6516 / hybrid-connection setup, browser prerequisites, WAC sign-in failures. Excludes SSH access (see 'Remote access to the server with SSH') and the Entra ID Login extension (see 'Entra ID Login extension issue').",
+    "keywords": [
+      "windows admin center arc",
+      "wac arc machine extension",
+      "windows admin center port 6516 arc"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Windows Server Extended Security Updates (ESU)",
+    "l3": "(General)",
+    "description": "Enrolling Arc-enabled Windows Server (2012 / 2012 R2 and other end-of-support versions) in Extended Security Updates (ESU) via Azure Arc — license activation, billing scope, multi-year coverage, opt-out, license keys, and validating that a machine is receiving ESU patches. Excludes generic patch install issues (see 'Update Failed or Not Installed' under Azure Update Manager) and Hotpatching enrollment (see 'Enrollment in Windows Server Hotpatching').",
+    "keywords": [
+      "esu arc enrollment",
+      "extended security updates arc license",
+      "windows server 2012 esu via arc"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Trusted Platform Module (TPM)",
+    "l3": "Entra ID",
+    "description": "Using TPM-backed credentials with Entra ID on Arc-enabled servers — TPM attestation for Entra device registration, key storage in TPM, hardware-bound primary refresh tokens. Excludes the Entra ID Login extension itself (see 'Entra ID Login extension issue').",
+    "keywords": [
+      "tpm entra id attestation",
+      "tpm bound entra device key",
+      "entra id tpm protected token"
+    ]
+  },
+  {
+    "l1": "Azure Arc enabled servers",
+    "l2": "Trusted Platform Module (TPM)",
+    "l3": "Managed Identity",
+    "description": "Storing Arc Managed Identity credentials in the TPM — TPM-backed key protection for system-assigned MI on Arc machines, TPM hardware requirements, fallback behavior when TPM is unavailable. Excludes generic Managed Identity questions on Azure Automation (see those leaves) and the Entra ID Login extension.",
+    "keywords": [
+      "tpm protected managed identity arc",
+      "arc managed identity tpm key",
+      "managed identity hardware bound arc",
+      "tpm identity",
+      "hardware bound identity"
+    ]
+  },
+  {
+    "l1": "Azure Arc Gateway",
+    "l2": "Issue viewing an Arc resource gateway",
+    "l3": "(General)",
+    "description": "Issues viewing an Arc resource gateway in the Azure portal — gateway resource missing or not displayed, blade load failures, RBAC required to view, stale cache. Excludes creation (see 'Issues creating a new Arc Gateway resource') and deletion (see 'Issues deleting an Arc Gateway resource').",
+    "keywords": [
+      "view arc gateway portal",
+      "arc resource gateway missing portal",
+      "arc gateway blade load fail"
+    ]
+  },
+  {
+    "l1": "Azure Arc Gateway",
+    "l2": "Issues associating existing resources to a gateway",
+    "l3": "Issues associating Azure Arc enabled servers to a gateway",
+    "description": "Associating already-onboarded Azure Arc-enabled servers (Arc machines) to an Arc Gateway — gateway property update on the Arc machine, permission to mutate the resource, gateway scope and region match. Excludes associating Azure Local nodes (see 'Issues associating Azure Local to a gateway') and the gateway-resource lifecycle (see the create/delete/view leaves).",
+    "keywords": [
+      "associate arc server to gateway",
+      "attach arc enabled server gateway",
+      "arc machine gateway property update"
+    ]
+  },
+  {
+    "l1": "Azure Arc Gateway",
+    "l2": "Issues associating existing resources to a gateway",
+    "l3": "Issues associating Azure Local to a gateway",
+    "description": "Associating Azure Local (formerly Azure Stack HCI) clusters or nodes to an Arc Gateway — node-level gateway setting, prerequisites on the Local stack, region and Arc registration alignment. Excludes associating Arc-enabled servers (see sibling leaf) and creating the gateway resource itself.",
+    "keywords": [
+      "associate azure local to gateway",
+      "azure stack hci gateway association",
+      "azure local node gateway setting"
+    ]
+  },
+  {
+    "l1": "Azure Arc Gateway",
+    "l2": "Issues connecting a resource through a gateway",
+    "l3": "Issues connecting the Azure Arc enabled servers through a gateway",
+    "description": "An Arc-enabled server is associated to an Arc Gateway but outbound traffic through the gateway fails — endpoint reachability via gateway, TLS, dual-stack fallback, gateway endpoint allowlist on the server side. Excludes the initial association step (see 'Issues associating Azure Arc enabled servers to a gateway') and Azure Local connectivity (see sibling leaf).",
+    "keywords": [
+      "arc server traffic through gateway fail",
+      "arc machine outbound via gateway fail",
+      "arc gateway endpoint unreachable from server",
+      "arc server gateway",
+      "server through gateway"
+    ]
+  },
+  {
+    "l1": "Azure Arc Gateway",
+    "l2": "Issues connecting a resource through a gateway",
+    "l3": "Issues connecting the Azure Local through a gateway",
+    "description": "An Azure Local cluster is associated to an Arc Gateway but outbound traffic through the gateway fails — endpoint reachability, TLS interception, allowlist gaps specific to the Local stack. Excludes association issues (see 'Issues associating Azure Local to a gateway') and Arc-server-side connectivity (see sibling leaf).",
+    "keywords": [
+      "azure local traffic through gateway fail",
+      "azure stack hci outbound via gateway fail",
+      "arc gateway endpoint unreachable from local",
+      "azure local gateway",
+      "hci gateway"
+    ]
+  },
+  {
+    "l1": "Azure Arc Gateway",
+    "l2": "Issues creating a new Arc Gateway resource",
+    "l3": "(General)",
+    "description": "Creation of a new Arc Gateway resource fails — region/quota constraints, RBAC, ARM/portal flow errors, name collisions, missing prerequisites. Excludes association of resources to an already-created gateway (see the 'Issues associating' leaves) and viewing/deletion.",
+    "keywords": [
+      "create arc gateway resource fail",
+      "arc gateway provisioning error",
+      "new arc gateway resource quota"
+    ]
+  },
+  {
+    "l1": "Azure Arc Gateway",
+    "l2": "Issues deleting an Arc Gateway resource",
+    "l3": "(General)",
+    "description": "Deletion of an Arc Gateway resource fails or leaves orphans — gateway still referenced by associated Arc/Local resources, RBAC, force-delete procedure, soft-delete. Excludes disassociation of resources (handled under the 'Issues associating' leaves) and creation.",
+    "keywords": [
+      "delete arc gateway resource fail",
+      "arc gateway resource in use cannot delete",
+      "arc gateway orphan after delete",
+      "delete arc gateway",
+      "gateway orphan"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Cannot Enable",
+    "l3": "Deployment at Scale",
+    "description": "Enabling Machine Configuration across many machines fails — Azure Policy assignment scope not converging, role propagation, DINE (DeployIfNotExists) effect issues, partial rollouts across subscriptions or management groups. Excludes single-machine enablement (see 'Enable a Single Machine') and remediation behavior on already-enabled machines (see the Remediation L2 leaves).",
+    "keywords": [
+      "enable machine configuration at scale",
+      "machine configuration scope deployment",
+      "machine configuration mass rollout",
+      "noncompliant resources policy",
+      "deployifnotexists machine configuration",
+      "policy assignment scope"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Cannot Enable",
+    "l3": "Enable a Single Machine",
+    "description": "Enabling Machine Configuration on one specific machine fails — extension install on that VM/Arc machine, machine eligibility, system-assigned identity prerequisite, single-target Policy assignment. Excludes mass enablement (see 'Deployment at Scale') and remediation behavior on already-enabled machines (see the Remediation L2 leaves).",
+    "keywords": [
+      "enable machine configuration single machine",
+      "machine configuration single vm setup",
+      "machine configuration single target enablement"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Remediation",
+    "l3": "Continuous",
+    "description": "Continuous remediation mode in Machine Configuration — drift is auto-corrected on every evaluation cycle without user trigger; covers evaluation frequency, recurrence, and when continuous mode is the right choice. Excludes one-off remediation (see 'On-Demand') and turning remediation off entirely (see 'Disable').",
+    "keywords": [
+      "machine configuration continuous remediation",
+      "machine configuration auto remediation",
+      "machine configuration drift correction"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Remediation",
+    "l3": "Disable",
+    "description": "Turning remediation off for a Machine Configuration assignment — switching from a Modify-style effect back to AuditOnly, removing remediation while keeping audit, impact on existing compliance state. Excludes uninstalling Machine Configuration itself (see Cannot Enable leaves) and the active remediation modes (see 'Continuous' and 'On-Demand').",
+    "keywords": [
+      "disable machine configuration remediation",
+      "turn off machine configuration remediation",
+      "machine configuration auditonly effect"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Remediation",
+    "l3": "On-Demand",
+    "description": "Triggering a one-time remediation run on a Machine Configuration assignment — manual remediation tasks, ad-hoc target selection, when to prefer on-demand over the always-on continuous mode. Excludes the always-on flow (see 'Continuous') and turning remediation off (see 'Disable').",
+    "keywords": [
+      "machine configuration on demand remediation",
+      "machine configuration manual remediation",
+      "machine configuration one time remediation"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Migration",
+    "l3": "(General)",
+    "description": "Migration topic from the Machine Configuration team's perspective — moving any prior configuration management (Automation DSC, DSC VM extension, third-party tooling) onto Azure Machine Configuration, including high-level migration patterns and choosing target effects. Excludes the Automation-side migration runbook (see 'Migrating Automation DSC to Guest Configuration' under Azure Automation) and the DSC VM extension retirement timeline (see 'DSC Extension Retirement').",
+    "keywords": [
+      "migrate to machine configuration",
+      "machine configuration migration patterns",
+      "onboard legacy config to machine configuration"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Authoring Custom Configuration",
+    "l3": "(General)",
+    "description": "Authoring a custom Machine Configuration package — DSC-based or Inspec-based authoring, GuestConfiguration PowerShell module, package signing, publishing to a Storage Account, testing locally before assignment. Excludes Microsoft-published baseline packages (see 'Baseline security issues') and enabling the assignment itself (see Cannot Enable L2 leaves).",
+    "keywords": [
+      "author machine configuration package",
+      "guestconfiguration powershell module authoring",
+      "custom machine configuration package signing"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Baseline security issues",
+    "l3": "(General)",
+    "description": "Microsoft-published baseline Machine Configuration packages (Azure Security Baseline, CIS, STIG, etc.) — assigning baselines, interpreting compliance gaps, exemptions, drift after baseline updates. Excludes user-authored custom packages (see 'Authoring Custom Configuration') and general policy compliance reporting (see 'Policy Compliance').",
+    "keywords": [
+      "azure security baseline machine configuration",
+      "cis stig baseline machine configuration",
+      "machine configuration baseline compliance gap",
+      "security baseline",
+      "baseline compliance"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Policy Compliance",
+    "l3": "(General)",
+    "description": "Policy compliance reporting for Machine Configuration assignments — Compliance dashboard shows wrong state, machines reporting NonCompliant unexpectedly, exemptions, evaluation frequency. Excludes the remediation path that fixes non-compliance (see Remediation L2 leaves) and baseline-specific gaps (see 'Baseline security issues').",
+    "keywords": [
+      "machine configuration policy compliance dashboard",
+      "machine configuration noncompliant unexpected",
+      "machine configuration compliance evaluation"
+    ]
+  },
+  {
+    "l1": "Machine Configuration",
+    "l2": "Policy extension problems",
+    "l3": "(General)",
+    "description": "Issues with the Machine Configuration / Guest Configuration extension (AzurePolicyforWindows / AzurePolicyforLinux) on a target machine — install or upgrade failure of the extension, extension health, agent unable to fetch assignments, extension restart loops. Excludes generic Arc agent issues (see Arc 'Configuration and setup' leaves) and individual non-MC Arc extensions (see Arc 'Extensions' leaves).",
+    "keywords": [
+      "azurepolicyforwindows extension",
+      "azurepolicyforlinux extension",
+      "guest configuration extension health"
+    ]
+  }
+]
