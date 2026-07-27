@@ -17,10 +17,10 @@ modified pages are sent through the LLM.
 2. [Architecture & data flow](#2-architecture--data-flow)
    - [2.1 End-to-end overview](#21-end-to-end-overview)
    - [2.2 Inside the pipeline run](#22-inside-the-pipeline-run)
-5. [Configuration & tunables](#5-configuration--tunables)
-   - [5.2 Manual overrides](#52-manual-overrides)
-6. [Maintenance & troubleshooting](#6-maintenance--troubleshooting)
-   - [6.1 Regular maintenance tasks](#61-regular-maintenance-tasks)
+3. [Configuration & tunables](#3-configuration--tunables)
+   - [3.1 Manual overrides](#31-manual-overrides)
+4. [Maintenance & troubleshooting](#4-maintenance--troubleshooting)
+   - [4.1 Regular maintenance tasks](#41-regular-maintenance-tasks)
 
 ---
 
@@ -129,9 +129,9 @@ flowchart LR
 
 ---
 
-## 5. Configuration & tunables
+## 3. Configuration & tunables
 
-### 5.2 Manual overrides
+### 3.1 Manual overrides
 
 `.pipelines/wiki-sap-mapping/config/wiki-sap-overrides.json`:
 
@@ -146,9 +146,9 @@ Overrides take precedence over AI classification. Use sparingly — for pages wh
 
 ---
 
-## 6. Maintenance & troubleshooting
+## 4. Maintenance & troubleshooting
 
-### 6.1 Regular maintenance tasks
+### 4.1 Regular maintenance tasks
 
 | Cadence | Task | How |
 |---|---|---|
