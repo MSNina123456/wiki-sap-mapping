@@ -2,7 +2,7 @@
 # ---------------------------------------------
 # Enforces, at the Agency CLI level, what wiki-sap-mapping.agent.md's
 # Safety Rules state in prose: the agent may write ONLY under
-# `AAAP_CodeWiki/Draft/Nina/` or `out/`, and may NOT push to or force-push
+# `AAAP_CodeWiki/General/` or `out/`, and may NOT push to or force-push
 # any branch.
 #
 # Input  (stdin) : JSON `{ toolName, toolArgs|toolInput, ... }`
@@ -39,7 +39,7 @@ try {
 # (defined in wiki-sap-mapping-pipeline.yml). Hardcoded fallback is used
 # when the script is run locally outside the pipeline.
 $publishDir = $env:PUBLISH_PARENT_DIR
-if (-not $publishDir) { $publishDir = 'AAAP_CodeWiki/Draft/Nina' }
+if (-not $publishDir) { $publishDir = 'AAAP_CodeWiki/General' }
 $publishDir = $publishDir.TrimEnd('/') + '/'
 $ALLOWED_PREFIXES = @('out/', $publishDir)
 

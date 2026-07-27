@@ -18,11 +18,11 @@ trigger: none  # Agency invokes this pipeline — never run on code push.
 # ════════════════════════════════════════════════════════════════════════════
 variables:
   - name: PUBLISH_PARENT_DIR
-    value: AAAP_CodeWiki/Draft/Nina
+    value: AAAP_CodeWiki/General
   - name: INDEX_PAGE_NAME
     value: Wiki-SAP-Mapping
   - name: WIKI_URL_PREFIX
-    value: /Draft/Nina
+    value: /General
 
 # The 1ES Agency pipeline template lives in the 1ESPipelineTemplates repo.
 # 1ES.Agency is GA and ships in refs/tags/release alongside Official/Unofficial.
@@ -240,7 +240,7 @@ extends:
           script: |
             # Single source of truth: PUBLISH_PARENT_DIR pipeline variable.
             $publishDir = $env:PUBLISH_PARENT_DIR
-            if (-not $publishDir) { $publishDir = 'AAAP_CodeWiki/Draft/Nina' }
+            if (-not $publishDir) { $publishDir = 'AAAP_CodeWiki/General' }
             $publishDir = $publishDir.TrimEnd('/')
             $publishRe  = [regex]::Escape($publishDir)
 

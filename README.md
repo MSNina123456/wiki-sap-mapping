@@ -2,7 +2,7 @@
 
 Auto-classifies every page of the AAAP Code Wiki against a closed three-level
 SAP catalog (**L1 → L2 → L3**, 96 leaves) and **commits the rendered Markdown
-reports into `AAAP_CodeWiki/Draft/Nina/` via an Agency-driven pull request** for human
+reports into `AAAP_CodeWiki/General/` via an Agency-driven pull request** for human
 review.
 
 Hash-based incremental cache keeps re-runs cheap: pages whose content hasn't
@@ -45,14 +45,14 @@ work (Agency pipelines require an ASA job context that manual runs lack).
 |---|---|
 | 1–2 min | Agency picks up the assignment and posts the build link in the work-item Comments |
 | 5–30 min | Pipeline runs: `validate-catalog` → cache fetch → `list-wiki-pages` → diff → Stage 1 (L1 routing) → Stage 2 (L2/L3 detail) → render → publish |
-| At end | Agency commits the new Markdown to a fresh feature branch `copilot/swe-wi<NNNN>-<hash>` and opens a **draft PR** scoped to `AAAP_CodeWiki/Draft/Nina/**` |
+| At end | Agency commits the new Markdown to a fresh feature branch `copilot/swe-wi<NNNN>-<hash>` and opens a **draft PR** scoped to `AAAP_CodeWiki/General/**` |
 | You | Review the PR → approve → merge |
 
 ### Special cases
 
 - **Wiki content unchanged since last run** → `publish-mapping` reports `no markdown changes` and Agency abandons the empty PR. **No action needed.**
 - **Build fails** → see [§6.3 Troubleshooting matrix](#63-troubleshooting-matrix).
-- **PR contains files outside `AAAP_CodeWiki/Draft/Nina/`** → guard step should have prevented this; **abandon PR immediately, do not merge**, file platform bug.
+- **PR contains files outside `AAAP_CodeWiki/General/`** → guard step should have prevented this; **abandon PR immediately, do not merge**, file platform bug.
 
 ---
 
@@ -74,7 +74,7 @@ flowchart TD
   AP --> PIPE
   PIPE -->|on green| PR
   PR --> REV
-  REV --> WIKI[(AAAP_CodeWiki/Draft/Nina/<br/>up to date on main)]
+  REV --> WIKI[(AAAP_CodeWiki/General/<br/>up to date on main)]
 
   classDef external fill:#e0e7ff,stroke:#3730a3,color:#1e3a8a
   classDef artifact fill:#fef3c7,stroke:#92400e,color:#78350f
@@ -106,13 +106,13 @@ flowchart LR
     MERGE[merge-mapping<br/>carryover + new]
     R2[render-per-l1<br/>per L1 detail, by leaf SAP<br/>+ Rule C strict filter<br/>+ writes render-stats.json]
     R1[render-index<br/>top-level INDEX<br/>reads render-stats]
-    PUB[publish-mapping<br/>sync md → AAAP_CodeWiki/Draft/Nina/]
+    PUB[publish-mapping<br/>sync md → AAAP_CodeWiki/General/]
     S1 --> PREP2 --> S2 --> CONS --> MERGE --> R2 --> R1 --> PUB
   end
 
   subgraph POST[postAgentSteps]
     direction TB
-    G[guard<br/>git status: only<br/>AAAP_CodeWiki/Draft/Nina/<br/>allowed; else revert + fail]
+    G[guard<br/>git status: only<br/>AAAP_CodeWiki/General/<br/>allowed; else revert + fail]
     T[trim out/ to cache essentials]
     CP[copy out/ → Agency_LogPath<br/>becomes AgencyArtifact]
     TAG[tag build cache-ready<br/>only after CP succeeds]
@@ -193,7 +193,7 @@ These are **layered on top of the AI's content-based judgment** (Stage 2 reads t
 
 ### 2.6 5-layer write-scope defense
 
-The agent is allowed to write only `AAAP_CodeWiki/Draft/Nina/**` and `out/**`. Multiple layers protect every other path (especially the rest of `AAAP_CodeWiki/` Code Wiki content):
+The agent is allowed to write only `AAAP_CodeWiki/General/**` and `out/**`. Multiple layers protect every other path (especially the rest of `AAAP_CodeWiki/` Code Wiki content):
 
 | # | Layer | Type | Where |
 |---|---|---|---|
@@ -203,7 +203,7 @@ The agent is allowed to write only `AAAP_CodeWiki/Draft/Nina/**` and `out/**`. M
 | 4 | `.gitignore` (out/) | Hard (git tree) | `.gitignore` |
 | 5 | Branch policy + PR review | Process | ADO branch policies |
 
-Layer 3 is the deterministic backstop: even if every other layer fails, `git status` enumerates all modified files; anything outside `AAAP_CodeWiki/Draft/Nina/` triggers `git checkout --` revert and `exit 99`.
+Layer 3 is the deterministic backstop: even if every other layer fails, `git status` enumerates all modified files; anything outside `AAAP_CodeWiki/General/` triggers `git checkout --` revert and `exit 99`.
 
 ---
 
@@ -232,16 +232,15 @@ Layer 3 is the deterministic backstop: even if every other layer fails, `git sta
 └── hooks/
     ├── copilot-hooks.json              # preToolUse manifest
     └── scripts/
-        └── pre-tool-guard.ps1          # hard-deny writes outside AAAP_CodeWiki/Draft/Nina/ + out/
+        └── pre-tool-guard.ps1          # hard-deny writes outside AAAP_CodeWiki/General/ + out/
 
-AAAP_CodeWiki/                          # Code Wiki content (read-only by agent EXCEPT under Draft/Nina/)
-└── Draft/
-    └── Nina/                           # AGENT-GENERATED — never edit by hand
-        ├── Wiki-SAP-Mapping.md         # INDEX page
-        └── Wiki-SAP-Mapping/           # one per L1 with classified pages
-            ├── Wiki-SAP-Mapping-Azure-Arc-enabled-servers.md
-            ├── Wiki-SAP-Mapping-Azure-Automation.md
-            └── …
+AAAP_CodeWiki/                          # Code Wiki content (read-only by agent EXCEPT under General/Wiki-SAP-Mapping/)
+└── General/                            # AGENT-GENERATED under this scope — never edit the auto-generated files by hand
+    ├── Wiki-SAP-Mapping.md             # INDEX page
+    └── Wiki-SAP-Mapping/               # one per L1 with classified pages
+        ├── Wiki-SAP-Mapping-Azure-Arc-enabled-servers.md
+        ├── Wiki-SAP-Mapping-Azure-Automation.md
+        └── …
 
 .gitignore                              # blocks out/ from any PR
 README.md                               # this file
@@ -264,7 +263,7 @@ single check at the end before moving on.
 
 ### Phase B — Commit application files to `main`
 
-Application files to commit (everything in [§3](#3-repository-layout-11-files) except auto-generated `AAAP_CodeWiki/Draft/Nina/**`):
+Application files to commit (everything in [§3](#3-repository-layout-11-files) except auto-generated `AAAP_CodeWiki/General/**`):
 
 ```
 .azuredevops/policies/agency-preferences.yml    (pipelineId placeholder — filled in Phase D)
@@ -318,11 +317,11 @@ Commit to `main`. **Wait 1–3 min** for Agency to re-index the policy.
 Follow [§1](#1-how-to-trigger-a-refresh-daily-op) to create the trigger work item.
 
 - First run has no cache → **classifies ALL wiki pages → 15–30 min**.
-- First PR contains `AAAP_CodeWiki/Draft/Nina/Wiki-SAP-Mapping.md` (INDEX) + `AAAP_CodeWiki/Draft/Nina/Wiki-SAP-Mapping/Wiki-SAP-Mapping-<L1>.md` (one per L1 with classified pages).
+- First PR contains `AAAP_CodeWiki/General/Wiki-SAP-Mapping.md` (INDEX) + `AAAP_CodeWiki/General/Wiki-SAP-Mapping/Wiki-SAP-Mapping-<L1>.md` (one per L1 with classified pages).
 - **Review carefully — this is your baseline.** Spot-check 10–20 leaves to confirm the classifications look reasonable.
 - Merge.
 
-**Check**: PR merged, `AAAP_CodeWiki/Draft/Nina/` exists on `main` with content. From now on, daily ops follow [§1](#1-how-to-trigger-a-refresh-daily-op) only.
+**Check**: PR merged, `AAAP_CodeWiki/General/` exists on `main` with content. From now on, daily ops follow [§1](#1-how-to-trigger-a-refresh-daily-op) only.
 
 ### Phase F (optional but recommended) — Branch policy on `main`
 
@@ -437,8 +436,8 @@ Path is **fixed** by Agency service at `.azuredevops/policies/agency-preferences
 | `download previous artifact` says `Artifact AgencyArtifact was not found for build NNN` | Stale code: the download step is using `artifactName: AgencyArtifact` (exact) but the 1ES.Agency template publishes with a decorated name pattern (`AgencyArtifact-{Org}-{Project}-{PipelineId}-{BuildId}`). Fix: omit `artifactName`, use `itemPattern` to pull the JSON cache files from any artifact, then flatten into `_cache/` root | See current pipeline yml — the `download` + `flatten` step pair handles this. If you ever see this error after the fix, check the artifact actually exists on the source build (build page → Related → "X published") |
 | Every run keeps doing a full LLM rebuild | (1) cache-ready tag never applied (permission); or (2) the artifact-name mismatch above; or (3) the source build genuinely lacks the artifact | Check `Post-Agent: tag build as cache-ready` log on PRIOR builds. If `Failed to add cache-ready tag`: ADO → Project Settings → Pipelines → Permissions → grant `Edit build quality`. Otherwise compare prior build's artifact name vs what download is requesting |
 | `Run Agency` hangs > 30 min or burns excessive tokens | Stage-2 bucket too large for LLM context | Lower `MAX_PAGES_PER_BUCKET_BATCH` pipeline variable (try 25 or 20) |
-| Post-Agent `guard` step fails with `Agent modified files outside AAAP_CodeWiki/Draft/Nina/` | Agent went off-script (smoke verified this DOES happen) | Defense worked — wiki + repo files reverted. Investigate `wiki-sap-mapping.agent.md` Safety Rules and whether agent's task got misinterpreted. Re-dispatch |
-| PR contains `AAAP_CodeWiki/` changes outside `Draft/Nina/` | Both Layer 2 (hook) AND Layer 3 (guard) failed — should be impossible | **Abandon PR immediately. Do not merge.** File platform bug; share build log of `Post-Agent: guard` step |
+| Post-Agent `guard` step fails with `Agent modified files outside AAAP_CodeWiki/General/` | Agent went off-script (smoke verified this DOES happen) | Defense worked — wiki + repo files reverted. Investigate `wiki-sap-mapping.agent.md` Safety Rules and whether agent's task got misinterpreted. Re-dispatch |
+| PR contains `AAAP_CodeWiki/` changes outside `General/` | Both Layer 2 (hook) AND Layer 3 (guard) failed — should be impossible | **Abandon PR immediately. Do not merge.** File platform bug; share build log of `Post-Agent: guard` step |
 | Agency PR title is unrelated ("Correct typos…" etc.) | Agent ignored the inlined prompt and reverted to default Copilot behaviour | Verify `wiki-sap-mapping.agent.md` was actually loaded — check log line "WikiSapMapper persona loaded". If not, abandon PR + investigate dispatch identity |
 | `publish-mapping` reports `no markdown changes` on first real run | Bug — should always have changes on first run | Check log of render-index + render-per-l1 produced files. Check publish-mapping's tally output |
 | Manual `Run pipeline` from ADO UI fails with ASA 404 | Expected — Agency CLI requires an ASA job ID, manual runs don't have one | Trigger via work item assignment as in §1, never via UI Run button |

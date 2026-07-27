@@ -15,7 +15,7 @@
 //   merge-mapping         carryover + changed → final mapping (in page order)
 //   render-per-l1         one detail page per L1 (folder-fold + "More" details)
 //   render-index          top-level INDEX page (reads render-stats from render-per-l1)
-//   publish-mapping       sync rendered md into AAAP_CodeWiki/Draft/Nina/ for Agency to commit
+//   publish-mapping       sync rendered md into AAAP_CodeWiki/General/ for Agency to commit
 //
 // Tunable env vars:
 //   WIKI_ROOT                 default: <cwd>/AAAP_CodeWiki
@@ -51,28 +51,30 @@ const OUT_DIR    = path.resolve(process.cwd(), "out");
 
 // Where the published mapping lives in the AAAP code wiki tree.
 //   Filesystem layout (under repo root):
-//     AAAP_CodeWiki/Draft/Nina/Wiki-SAP-Mapping.md            ← INDEX page
-//     AAAP_CodeWiki/Draft/Nina/Wiki-SAP-Mapping/<L1>.md       ← per-L1 detail
+//     AAAP_CodeWiki/General/Wiki-SAP-Mapping.md            ← INDEX page
+//     AAAP_CodeWiki/General/Wiki-SAP-Mapping/<L1>.md       ← per-L1 detail
 //   Wiki URL layout (what readers click):
-//     /Draft/Nina/Wiki-SAP-Mapping
-//     /Draft/Nina/Wiki-SAP-Mapping/Wiki-SAP-Mapping-<slug>
+//     /General/Wiki-SAP-Mapping
+//     /General/Wiki-SAP-Mapping/Wiki-SAP-Mapping-<slug>
 // Publish location is centrally configured by the pipeline YAML
 // (`variables:` block in wiki-sap-mapping-pipeline.yml). The 3 constants
 // below read those pipeline variables via env vars at runtime; the
 // hardcoded fallbacks are used when running the script locally outside
 // the pipeline.
 const PUBLISH_PARENT_DIR = process.env.PUBLISH_PARENT_DIR
-  || path.posix.join("AAAP_CodeWiki", "Draft", "Nina");
+  || path.posix.join("AAAP_CodeWiki", "General");
 const INDEX_PAGE_NAME    = process.env.INDEX_PAGE_NAME    || "Wiki-SAP-Mapping";
-const WIKI_URL_PREFIX    = process.env.WIKI_URL_PREFIX    || "/Draft/Nina";
+const WIKI_URL_PREFIX    = process.env.WIKI_URL_PREFIX    || "/General";
 
 const WIKI_CFG = {
   wikiRoot: "AAAP_CodeWiki",
   excludedDirs: [
-    // Draft is excluded from list-wiki-pages because our own published
-    // output lives under AAAP_CodeWiki/Draft/Nina/. Without this exclusion
-    // we'd self-classify our own mapping pages on every run.
-    "Draft", ".attachments", "Archived",
+    // Our own published per-L1 detail folder — must be excluded so we
+    // don't self-classify the pages we just generated. Name is derived
+    // from INDEX_PAGE_NAME (default "Wiki-SAP-Mapping"); if you change
+    // INDEX_PAGE_NAME in the pipeline variables, this exclusion follows.
+    INDEX_PAGE_NAME,
+    ".attachments", "Archived",
     ".git", ".pipelines", ".config", ".azuredevops", ".github",
     "out", "node_modules", "wiki-sap-mapping"
   ]
@@ -375,6 +377,10 @@ function isContentEmpty(raw) {
 }
 async function walkWiki(root) {
   const excl = new Set(WIKI_CFG.excludedDirs.map(d => d.toLowerCase()));
+  // Also self-exclude the INDEX file itself (sits at the publish parent
+  // root next to the INDEX_PAGE_NAME/ subfolder; the folder is caught by
+  // excl above, but a top-level file needs a name-based check).
+  const excludedFile = `${INDEX_PAGE_NAME}.md`.toLowerCase();
   const out = [];
   async function rec(dir) {
     for (const e of await fs.readdir(dir, { withFileTypes: true })) {
@@ -383,6 +389,7 @@ async function walkWiki(root) {
         if (excl.has(e.name.toLowerCase())) continue;
         await rec(full);
       } else if (e.isFile() && /\.md$/i.test(e.name)) {
+        if (e.name.toLowerCase() === excludedFile) continue;
         out.push({ full, rel: path.relative(root, full), parentName: path.basename(path.dirname(full)) });
       }
     }
@@ -1049,13 +1056,13 @@ async function cmdRenderPerL1() {
 //   out/Wiki-SAP-Mapping-<L1>.md
 // Destination layout (under repo, ADO Code Wiki convention — INDEX page +
 // child folder of the same name for sub-pages):
-//   AAAP_CodeWiki/Draft/Nina/Wiki-SAP-Mapping.md           ← INDEX
-//   AAAP_CodeWiki/Draft/Nina/Wiki-SAP-Mapping/Wiki-SAP-Mapping-<L1>.md
+//   AAAP_CodeWiki/General/Wiki-SAP-Mapping.md           ← INDEX
+//   AAAP_CodeWiki/General/Wiki-SAP-Mapping/Wiki-SAP-Mapping-<L1>.md
 // ────────────────────────────────────────────────────────────────────────────
 async function cmdPublishMapping() {
   const SRC_DIR     = OUT_DIR;
-  const DST_PARENT  = path.resolve(process.cwd(), PUBLISH_PARENT_DIR);   // .../Draft/Nina/
-  const DST_CHILD   = path.join(DST_PARENT, INDEX_PAGE_NAME);            // .../Draft/Nina/Wiki-SAP-Mapping/
+  const DST_PARENT  = path.resolve(process.cwd(), PUBLISH_PARENT_DIR);   // .../General/
+  const DST_CHILD   = path.join(DST_PARENT, INDEX_PAGE_NAME);            // .../General/Wiki-SAP-Mapping/
   const INDEX_FILE  = `${INDEX_PAGE_NAME}.md`;
   const PER_L1_PFX  = `${INDEX_PAGE_NAME}-`;
 

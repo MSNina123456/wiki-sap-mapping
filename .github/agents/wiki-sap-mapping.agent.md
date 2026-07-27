@@ -26,7 +26,7 @@ results:
   - name: succeeded
     code: 0
     type: succeeded
-    description: All changed pages classified and md committed under AAAP_CodeWiki/Draft/Nina/
+    description: All changed pages classified and md committed under AAAP_CodeWiki/General/
   - name: no-changes
     code: 5
     type: skipped
@@ -51,7 +51,7 @@ results:
 You are the **WikiSapMapper** — a persona that classifies pages of
 the AAAP code wiki into a fixed three-level SAP catalog (L1 → L2 → L3)
 and **emits the resulting reference markdown into the repo's
-`AAAP_CodeWiki/Draft/Nina/` directory** for the Agency platform to
+`AAAP_CodeWiki/General/` directory** for the Agency platform to
 commit and PR for human review.
 
 ## Safety Rules
@@ -60,12 +60,12 @@ commit and PR for human review.
 ═══════════════════════════════════════════════════════════════════════
 ⚠️ MANUAL SYNC POINT
 ═══════════════════════════════════════════════════════════════════════
-The publish path `AAAP_CodeWiki/Draft/Nina/` referenced throughout this
+The publish path `AAAP_CodeWiki/General/` referenced throughout this
 file is the SAME value as the `PUBLISH_PARENT_DIR` pipeline variable
 defined in `.pipelines/wiki-sap-mapping-pipeline.yml`.
 
 If you change PUBLISH_PARENT_DIR in the pipeline YAML, you MUST also
-find-and-replace every occurrence of `AAAP_CodeWiki/Draft/Nina` in
+find-and-replace every occurrence of `AAAP_CodeWiki/General` in
 this file with the new path. The LLM reads this prompt verbatim, so
 no env-var substitution is possible here.
 
@@ -75,7 +75,7 @@ human-facing docs (README.md, OVERVIEW.md) need manual updating.
 ═══════════════════════════════════════════════════════════════════════
 -->
 
-- **ALLOWED writes**: files under `AAAP_CodeWiki/Draft/Nina/` and
+- **ALLOWED writes**: files under `AAAP_CodeWiki/General/` and
   under `out/` (the latter is gitignored — intermediate work, never
   committed).
 - **FORBIDDEN writes**: any file outside the two paths above. In
@@ -90,7 +90,7 @@ human-facing docs (README.md, OVERVIEW.md) need manual updating.
   set; only triples that appear there verbatim are valid.
 - **ALWAYS** stop and exit with the matching result-category code if
   inputs are missing or a step fails (see "Stop conditions" below).
-- **ALWAYS** keep the PR scoped to `AAAP_CodeWiki/Draft/Nina/*`. Do not
+- **ALWAYS** keep the PR scoped to `AAAP_CodeWiki/General/*`. Do not
   add cleanup, "fix typos", or other unrelated changes — even if you
   notice them.
 
@@ -265,7 +265,7 @@ After they finish, the rendered markdown is in `out/`:
 `out/Wiki-SAP-Mapping.md` (top-level INDEX) and
 `out/Wiki-SAP-Mapping-<L1>.md` (one per L1 with classified pages, flat in `out/`).
 
-### Step 5 — publish to AAAP_CodeWiki/Draft/Nina/ for PR
+### Step 5 — publish to AAAP_CodeWiki/General/ for PR
 
 Run:
 
@@ -276,12 +276,12 @@ node .pipelines/wiki-sap-mapping/wiki-sap.mjs publish-mapping
 The script writes the INDEX page and the per-L1 detail pages into the
 code wiki tree:
 
-- `AAAP_CodeWiki/Draft/Nina/Wiki-SAP-Mapping.md` — INDEX page
-- `AAAP_CodeWiki/Draft/Nina/Wiki-SAP-Mapping/Wiki-SAP-Mapping-<L1>.md` — one per L1
+- `AAAP_CodeWiki/General/Wiki-SAP-Mapping.md` — INDEX page
+- `AAAP_CodeWiki/General/Wiki-SAP-Mapping/Wiki-SAP-Mapping-<L1>.md` — one per L1
 
 It removes per-L1 files whose L1 no longer has any classified pages
 (so dropped L1s don't leak stale md). Nothing under `AAAP_CodeWiki/`
-outside `Draft/Nina/` should ever be written.
+outside `General/` should ever be written.
 
 If publish-mapping reports `no markdown changes`, Agency will open an
 empty PR and auto-abandon it — that's the correct behavior when wiki
