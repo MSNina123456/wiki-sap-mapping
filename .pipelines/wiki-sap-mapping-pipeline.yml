@@ -66,6 +66,40 @@ extends:
         - agentsupportapi.app.prod.gitops.startclean.microsoft.com
 
     preAgentSteps:
+      # The 1ES Agency template injects Clone/Sync repo before preAgentSteps.
+      # Fail with an actionable message if that injected step did not produce
+      # a usable checkout. Without this guard, the next Node command reports
+      # MODULE_NOT_FOUND and incorrectly makes the project script look broken.
+      - task: PowerShell@2
+        displayName: 'Pre-Agent: verify Agency checkout'
+        inputs:
+          targetType: inline
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          script: |
+            $repoRoot = $env:BUILD_SOURCESDIRECTORY
+            $gitDir = Join-Path $repoRoot '.git'
+            $requiredScript = Join-Path $repoRoot '.pipelines/wiki-sap-mapping/wiki-sap.mjs'
+
+            Write-Host "[checkout] sources=$repoRoot"
+            Write-Host "[checkout] workingBranch=$env:AGENCY_WORKINGBRANCH targetBranch=$env:AGENCY_TARGETBRANCH"
+
+            if (-not (Test-Path -LiteralPath $gitDir) -or
+                -not (Test-Path -LiteralPath $requiredScript -PathType Leaf)) {
+              Write-Host "##[error]Agency Clone/Sync repo did not create a complete source checkout."
+              Write-Host "##[error]Expected file: $requiredScript"
+              Write-Host "##[error]Do not rerun or re-queue this build: the Agency/ASA active job is single-use."
+              Write-Host "##[error]Trigger a fresh job by unassigning the work item, saving it, and assigning it to Agency again."
+              exit 86
+            }
+
+            $head = git -C $repoRoot rev-parse --short HEAD
+            if ($LASTEXITCODE -ne 0) {
+              Write-Host "##[error]Agency checkout exists but has no valid Git HEAD."
+              exit 86
+            }
+            Write-Host "[checkout] OK - HEAD=$head"
+
       - task: UseNode@1
         displayName: 'Use Node 20.x'
         inputs:

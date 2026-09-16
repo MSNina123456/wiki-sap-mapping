@@ -158,3 +158,38 @@ Overrides take precedence over AI classification. Use sparingly — for pages wh
 | Monthly | Verify Copilot license + Agency dispatch still works | One refresh dispatch end-to-end |
 | Quarterly | Sanity-check Top-20-per-leaf coverage | Look for leaves with 20+ pages in per-L1 files (could indicate keyword/description ambiguity) |
 | As-needed | Bump Node version | Edit `version: '20.x'` in pipeline yml under `UseNode@1` |
+
+### 4.2 Recover from Agency clone or active-job failures
+
+The 1ES Agency template runs its injected `Clone/Sync repo` step before this
+project's `preAgentSteps`. A transient Agency dispatch problem can therefore
+leave `$(Build.SourcesDirectory)` empty before any project code executes.
+
+Typical log sequence:
+
+```text
+fatal: Remote branch copilot/swe-wi... not found in upstream origin
+Agency Clone/Sync repo did not create a complete source checkout.
+```
+
+The pipeline now has a `Pre-Agent: verify Agency checkout` fail-fast step. It
+checks for both `.git` and `.pipelines/wiki-sap-mapping/wiki-sap.mjs`, then
+prints the correct recovery action instead of allowing a misleading Node
+`MODULE_NOT_FOUND` error.
+
+**Recovery procedure:**
+
+1. Do **not** use **Rerun**, **Retry**, or manually queue Pipeline 644. An
+   Agency/ASA active job is single-use, so a re-queued build reaches
+   `Run Agency` without an active job and fails with HTTP 404.
+2. Open the originating work item.
+3. Set **Assigned To** to blank and save.
+4. Set **Assigned To** back to **Agency** and save.
+5. Verify the tag `agency:pipelineTrialMode=true` and the development branch
+   link `AAAP_Code / main` are still present.
+6. Use the newly created build; do not resume the failed build.
+
+This guard improves diagnosis but cannot create the remote working branch
+earlier than the template's injected clone step. Branch creation is owned by
+the Agency service, so repeated clone failures should be reported to Agency
+with the build ID, work-item ID, working branch, and `Clone/Sync repo` log.
